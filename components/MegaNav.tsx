@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import useSWR from "swr";
@@ -30,11 +30,6 @@ interface NavLinkProps {
   href: string;
   className?: string;
   children: ReactNode;
-  "aria-label"?: string;
-}
-
-interface ProductTitleProps {
-  title: string;
 }
 
 const NavLink = ({ href, className, children, ...props }: NavLinkProps) => (
@@ -47,45 +42,9 @@ const NavLink = ({ href, className, children, ...props }: NavLinkProps) => (
   </Link>
 );
 
-const ProductTitle = ({ title }: ProductTitleProps) => {
-  if (!title.includes("⏱️")) return <span>{title}</span>;
-
-  const [time, productName] = title.split(" - ");
-  return (
-    <>
-      <span className="text-emerald-600 dark:text-emerald-400 font-mono bg-emerald-50 dark:bg-emerald-900/20 px-1 py-0.5 rounded mr-1 inline-flex items-center">
-        {time}
-      </span>
-      <span>{productName}</span>
-    </>
-  );
-};
-
 const fetcher = async (url: string) => {
-  const response = await fetch(url, {
-    cache: url.includes("check=true") ? "no-store" : "default",
-    headers: {
-      "Cache-Control": url.includes("check=true")
-        ? "no-cache, no-store"
-        : "default",
-      Pragma: url.includes("check=true") ? "no-cache" : "default",
-    },
-  });
-
-  const version = response.headers.get("X-Navigation-Version");
-  const lastUpdated = response.headers.get("X-Last-Updated");
-  const updated = response.headers.get("X-Navigation-Updated") === "true";
-  const data = await response.json();
-
-  return {
-    ...data,
-    _metadata: {
-      version: version ? Number.parseInt(version) : undefined,
-      lastUpdated,
-      updated,
-      timestamp: new Date().toISOString(),
-    },
-  };
+  const response = await fetch(url);
+  return response.json();
 };
 
 const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
@@ -95,43 +54,14 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
     isProductsOpen: false,
   });
   const pathname = usePathname();
-  const currentVersion = useRef<number | null>(null);
-  const initialRender = useRef(true);
 
-  const { data: nav } = useSWR<NavigationData & { _metadata?: any }>(
-    "/api/navigation",
-    fetcher,
-    {
-      fallbackData: {
-        ...fallbackData,
-      },
-      revalidateOnFocus: false,
-      revalidateOnMount: true,
-      revalidateOnReconnect: true,
-      refreshInterval: 0, // Disable automatic polling
-      onSuccess: (data) => {
-        if (initialRender.current) {
-          initialRender.current = false;
-
-          return;
-        }
-
-        if (
-          data?._metadata?.version &&
-          currentVersion.current !== null &&
-          data._metadata.version > currentVersion.current
-        ) {
-          setState((prev) => ({ ...prev, showUpdateNotification: true }));
-          setTimeout(
-            () =>
-              setState((prev) => ({ ...prev, showUpdateNotification: false })),
-            5000
-          );
-        }
-        currentVersion.current = data?._metadata?.version || null;
-      },
-    }
-  );
+  const { data: nav } = useSWR<NavigationData>("/api/navigation", fetcher, {
+    fallbackData,
+    revalidateOnFocus: false,
+    revalidateOnMount: true,
+    revalidateOnReconnect: true,
+    refreshInterval: 10, // Poll for fresh data every 30 seconds
+  });
 
   useEffect(() => {
     const handleResize = () =>
@@ -145,12 +75,6 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
   useEffect(() => {
     setState((prev) => ({ ...prev, mobileMenuOpen: false }));
   }, [pathname]);
-
-  useEffect(() => {
-    if (nav?._metadata?.version && currentVersion.current === null) {
-      currentVersion.current = nav._metadata.version;
-    }
-  }, [nav]);
 
   const commonLinkStyles = (isActive: boolean) => `
     ${
@@ -174,11 +98,7 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
 
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <NavLink
-            href="/"
-            className="flex items-center space-x-2"
-            aria-label="Home"
-          >
+          <NavLink href="/" className="flex items-center space-x-2">
             <svg
               width="26"
               height="26"
@@ -186,7 +106,6 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               className="text-foreground dark:text-foreground"
-              aria-hidden="true"
             >
               <path
                 d="M37.5274 0L75.0548 65H0L37.5274 0Z"
@@ -232,9 +151,6 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
                     className={`group flex items-center px-4 py-2 text-sm font-medium rounded-md ${commonLinkStyles(
                       false
                     )}`}
-                    aria-expanded={
-                      item.title === "Products" && state.isProductsOpen
-                    }
                   >
                     {item.title}
                     <ChevronDown className="ml-1 h-4 w-4 opacity-70 transition-transform duration-200 group-hover:rotate-180" />
@@ -258,7 +174,7 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
                           }`}
                         >
                           <div className="font-medium dark:text-foreground">
-                            <ProductTitle title={dropdownItem.title} />
+                            <span>{dropdownItem.title}</span>
                           </div>
                         </NavLink>
                       ))}
@@ -279,8 +195,6 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
                   mobileMenuOpen: !prev.mobileMenuOpen,
                 }))
               }
-              aria-expanded={state.mobileMenuOpen}
-              aria-label="Toggle menu"
             >
               <svg
                 width="24"
@@ -344,7 +258,9 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
-                          <ProductTitle title={dropdownItem.title} />
+                          <div className="font-medium dark:text-foreground">
+                            <span>{dropdownItem.title}</span>
+                          </div>
                         </NavLink>
                       ))}
                     </div>
