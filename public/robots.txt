@@ -1,0 +1,12 @@
+# robots.txt for meganav-demo
+User-agent: *
+Allow: /
+
+# Allow all bots to access all content
+Sitemap: https://meganav-demo.vercel.app/sitemap.xml
+
+# Disallow API routes
+Disallow: /api/
+
+# Prevent bots from hammering the site with requests
+Crawl-delay: 10
