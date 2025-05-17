@@ -39,6 +39,9 @@ This demo showcases a modern, performant mega navigation solution built with Nex
 
 ### Testing the CSS-First Approach
 
+![CleanShot 2025-05-17 at 20 19 03](https://github.com/user-attachments/assets/d87a51f2-e300-497b-b6dc-c2ae4f40e07f)
+
+
 To verify the CSS-first implementation and its benefits:
 
 1. Open the page in Chrome Browser
