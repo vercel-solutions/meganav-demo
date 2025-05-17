@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import "./globals.css";
 import MegaNav from "@/components/MegaNav";
-import { mockNavigationData } from "@/lib/mock-nav";
+import { getNavigationData } from "@/lib/mock-nav";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
@@ -15,9 +15,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Get initial navigation data with data from the time of build phase
-  const nav = mockNavigationData;
-
+  const nav = await getNavigationData();
   return (
     <html lang="en" className={`scroll-smooth`} suppressHydrationWarning>
       <body className="antialiased min-h-screen flex flex-col">

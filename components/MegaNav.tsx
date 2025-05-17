@@ -60,8 +60,11 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
     revalidateOnFocus: false,
     revalidateOnMount: true,
     revalidateOnReconnect: true,
-    refreshInterval: 10, // Poll for fresh data every 30 seconds
+    refreshInterval: 10000,
   });
+
+  // Ensure we always have data to render
+  const navigationData = nav || fallbackData;
 
   useEffect(() => {
     const handleResize = () =>
@@ -116,7 +119,7 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
           </NavLink>
 
           <nav className="hidden md:flex items-center space-x-1">
-            {nav?.items.map((item, index) => (
+            {navigationData.items.map((item, index) => (
               <div
                 key={index}
                 className="mega-nav-item"
@@ -230,7 +233,7 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
         }`}
       >
         <div className="container mx-auto px-4 py-3 space-y-1">
-          {nav?.items.map((item, index) => (
+          {navigationData.items.map((item, index) => (
             <div key={index}>
               {item.href ? (
                 <NavLink
@@ -258,9 +261,7 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
                               : "text-muted-foreground hover:text-foreground"
                           }`}
                         >
-                          <div className="font-medium dark:text-foreground">
-                            <span>{dropdownItem.title}</span>
-                          </div>
+                          <span>{dropdownItem.title}</span>
                         </NavLink>
                       ))}
                     </div>
