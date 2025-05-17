@@ -21,6 +21,10 @@ This demo showcases a modern, performant mega navigation solution built with Nex
 - Perfect for large sites with thousands of pages - update navigation without revalidating all pages
 - See the implementation in [app/api/navigation/route.ts](app/api/navigation/route.ts)
 
+![CleanShot 2025-05-17 at 20 23 18](https://github.com/user-attachments/assets/93645b49-3e37-4b4c-916d-ee850b64570a)
+
+
+
 ### Configurable Data Freshness
 
 - Time interval updates (default: 10 seconds)
