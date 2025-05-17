@@ -15,17 +15,14 @@ interface NavDropdownItem {
 }
 
 interface NavigationData {
-  header: {
-    logo: string;
-    items: Array<{
+  items: Array<{
+    title: string;
+    href?: string;
+    dropdown?: {
       title: string;
-      href?: string;
-      dropdown?: {
-        title: string;
-        items: NavDropdownItem[];
-      };
-    }>;
-  };
+      items: NavDropdownItem[];
+    };
+  }>;
 }
 
 // Reusable components
@@ -107,7 +104,6 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
     {
       fallbackData: {
         ...fallbackData,
-        _metadata: { version: 1, lastUpdated: new Date().toISOString() },
       },
       revalidateOnFocus: false,
       revalidateOnMount: true,
@@ -116,7 +112,7 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
       onSuccess: (data) => {
         if (initialRender.current) {
           initialRender.current = false;
-          currentVersion.current = data?._metadata?.version || null;
+
           return;
         }
 
@@ -201,7 +197,7 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
           </NavLink>
 
           <nav className="hidden md:flex items-center space-x-1">
-            {nav?.header.items.map((item, index) => (
+            {nav?.items.map((item, index) => (
               <div
                 key={index}
                 className="mega-nav-item"
@@ -320,7 +316,7 @@ const MegaNav = ({ fallbackData }: { fallbackData: NavigationData }) => {
         }`}
       >
         <div className="container mx-auto px-4 py-3 space-y-1">
-          {nav?.header.items.map((item, index) => (
+          {nav?.items.map((item, index) => (
             <div key={index}>
               {item.href ? (
                 <NavLink
