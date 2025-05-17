@@ -9,16 +9,16 @@ export const mockNavigationData = {
           title: "Our Products",
           items: [
             {
-              title: "Product 1",
-              href: "/products",
+              title: `Product 1 ${new Date().toISOString()}`,
+              href: "/product-1",
             },
             {
-              title: "Product 2",
-              href: "/products",
+              title: `Product 2 ${new Date().toISOString()}`,
+              href: "/product-2",
             },
             {
-              title: "Product 3",
-              href: "/products",
+              title: `Product 3 ${new Date().toISOString()}`,
+              href: "/product-3",
             },
           ],
         },
