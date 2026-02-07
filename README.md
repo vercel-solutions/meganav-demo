@@ -86,10 +86,6 @@ The demo uses several Next.js features:
 - SWR for client-side data fetching
 - CSS-first approach for optimal performance
 
-**Current Version**: Next.js 16.1.6 (upgraded from 15.3.7)
-- See [UPGRADE_SUMMARY.md](UPGRADE_SUMMARY.md) for upgrade details
-- See [UPGRADE_METHODOLOGY.md](UPGRADE_METHODOLOGY.md) for how the upgrade was completed without documentation access
-
 ## Learn More
 
 To learn more about the technologies used:
