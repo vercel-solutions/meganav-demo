@@ -3,6 +3,7 @@ const { chromium } = require('playwright');
 // Configuration
 const BASE_URL = process.env.DEPLOYMENT_URL || 'http://localhost:3000';
 const TIMEOUT = 30000;
+const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
 
 // Color codes for terminal output
 const colors = {
@@ -266,7 +267,7 @@ async function main() {
   });
   
   const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    userAgent: USER_AGENT,
     viewport: { width: 1280, height: 720 },
   });
   
